@@ -1,0 +1,58 @@
+[
+    {
+      "count": 5,
+      "description": "A QUALITY ALL-ROUND INFLATABLE PADDLEBOARD WITH MAXIMUM STABILITY FOR THE HEAVIER RIDER.",
+      "id": "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+      "price": 900,
+      "title": "Gladiator Pro"
+    },
+    {
+      "count": 6,
+      "description": "GROUNDBREAKING DESIGN TECHNOLOGY OFFERS THE LIGHTER RIDER THE PERFECT TOURING BOARD",
+      "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a0",
+      "price": 500,
+      "title": "Gladiator Origin"
+    },
+    {
+      "count": 2,
+      "description": "CHOOSE THE 14 FOR THE ULTIMATE IN SPEED AND GLIDE WHEN LOOKING FOR A FAST TOURING BOARD",
+      "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
+      "price": 1100,
+      "title": "Gladiator Elite"
+    },
+    {
+      "count": 1,
+      "description": "The overall balanced glide experience and premium features",
+      "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
+      "price": 1300,
+      "title": "Starboard"
+    },
+    {
+      "count": 2,
+      "description": "Ideal to those new to paddling or who want an all-round board with plenty of stability",
+      "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a3",
+      "price": 1100,
+      "title": "Red Puddle 10_6"
+    },
+    {
+      "count": 4,
+      "description": "The ideal board for carrying more equipment and/or rider weight",
+      "id": "7567ec4b-b10c-48c5-9345-fc73348a80a1",
+      "price": 1500,
+      "title": "Red Puddle Voyager"
+    },
+    {
+      "count": 7,
+      "description": "Coral Touring features a more advanced cruising shape specifically designed for all levels of trekking enthusiasts",
+      "id": "7567ec4b-b10c-48c5-9445-fc73c48a80a2",
+      "price": 1450,
+      "title": "Aqua Marina Touring"
+    },
+    {
+      "count": 3,
+      "description": "Making new discoveries and experiencing adventures has never been more exciting with our touring boards",
+      "id": "7567ec4b-b10c-45c5-9345-fc73c48a80a1",
+      "price": 1750,
+      "title": "Aqua Marina Hyper"
+    }
+  ]
