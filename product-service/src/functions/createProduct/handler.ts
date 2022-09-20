@@ -22,14 +22,14 @@ export const createProduct: ValidatedEventAPIGatewayProxyEvent<
       });
     }
 
-    const { title, description, price } = event.body;
+    const { title, description, price, count } = event.body;
 
     console.log(
-      `POST request: {title: ${title}, description: ${description}, price: ${price}`
+      `POST request: {title: ${title}, description: ${description}, price: ${price}, count: ${count}`
     );
 
     try {
-      const item = { id: uuid.v1(), title, description, price };
+      const item = { id: uuid.v1(), title, description, price, count };
 
       console.log('db.put', item)
 
@@ -38,7 +38,7 @@ export const createProduct: ValidatedEventAPIGatewayProxyEvent<
         Item: item,
       }).promise();
 
-      return { statusCode: 200, body: JSON.stringify(item) };
+      return formatJSONResponse({ statusCode: 200, response: item, headers });
     } catch (e) {
       console.error('Error during database request executing', e);
 
