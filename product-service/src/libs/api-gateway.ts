@@ -13,5 +13,5 @@ export const formatJSONResponse = (data: Record<string, unknown>) => {
 }
 
 export const allowHeaders = {
-  "Access-Control-Allow-Origin": "*"
+  'Access-Control-Allow-Origin': '*',
 };

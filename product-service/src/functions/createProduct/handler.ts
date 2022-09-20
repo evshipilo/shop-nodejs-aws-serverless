@@ -3,6 +3,7 @@ import { formatJSONResponse, allowHeaders as headers } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import schema from './schema';
 import { yupObject as verify } from '@libs/validate';
+import { Product } from 'src/models/product';
 
 const { DynamoDB } = require('aws-sdk');
 const TableName = process.env.TABLE_NAME;
@@ -12,43 +13,44 @@ const db = new DynamoDB.DocumentClient()
 export const createProduct: ValidatedEventAPIGatewayProxyEvent<
   typeof schema
 > = async (event): Promise<any> => {
-  await verify.isValid(event.body).then(async (isValid) => {
-    if (!isValid) {
-      console.log('Product data is invalid', event.body);
-      return formatJSONResponse({
-        response: 'Product data is invalid',
-        statusCode: 400,
-        headers,
-      });
-    }
+  
+  const isValid = await verify.isValid(event.body);
 
-    const { title, description, price, count } = event.body;
+  if (!isValid) {
+    console.log('Product data is invalid', event.body);
+    return formatJSONResponse({
+      response: 'Product data is invalid',
+      statusCode: 400,
+      headers,
+    });
+  }
 
-    console.log(
-      `POST request: {title: ${title}, description: ${description}, price: ${price}, count: ${count}`
-    );
+  const { title, description, price, count } = event.body as Product;
 
-    try {
-      const item = { id: uuid.v1(), title, description, price, count };
+  console.log(
+    `POST request: {title: ${title}, description: ${description}, price: ${price}, count: ${count}`
+  );
 
-      console.log('db.put', item)
+  try {
+    const item: Product = { id: uuid.v1(), title, description, price, count };
 
-      await db.put({
-        TableName,
-        Item: item,
-      }).promise();
+    console.log('db.put', item)
 
-      return formatJSONResponse({ statusCode: 200, response: item, headers });
-    } catch (e) {
-      console.error('Error during database request executing', e);
+    await db.put({
+      TableName,
+      Item: item,
+    }).promise();
 
-      return formatJSONResponse({
-        response: 'Error during database request executing',
-        statusCode: 500,
-        headers,
-      });
-    }
-  });
+    return formatJSONResponse({ statusCode: 200, response: item, headers });
+  } catch (e) {
+    console.error('Error during database request executing', e);
+
+    return formatJSONResponse({
+      response: 'Error during database request executing',
+      statusCode: 500,
+      headers,
+    });
+  }
 };
 
 export const main = middyfy(createProduct);
