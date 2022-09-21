@@ -1,15 +1,28 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { formatJSONResponse, allowHeaders as headers } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
-import productList from '@mocks/productList.json';
+
+const { DynamoDB } = require('aws-sdk');
+const TableName = process.env.TABLE_NAME;
+const db = new DynamoDB.DocumentClient()
 
 export const getProductsList: ValidatedEventAPIGatewayProxyEvent<
   never
 > = async (): Promise<any> => {
   try {
-    return formatJSONResponse({ response: productList, statusCode: 200, headers });
+    const products = await db
+    .scan({
+      TableName,
+    })
+    .promise()
+
+    console.log('Products from DB:', products)
+    
+    return formatJSONResponse({ response: products.Items, statusCode: 200, headers });
   } catch (e) {
-    return formatJSONResponse({ response: 'Product list not found', statusCode: 404, headers });
+    console.error('Error during database request executing', e);
+
+    return formatJSONResponse({ response: 'Error during database request executing', statusCode: 500, headers });
   }
 };
 
