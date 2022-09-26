@@ -17,7 +17,7 @@ export const createProduct: ValidatedEventAPIGatewayProxyEvent<
   const isValid = await verify.isValid(event.body);
 
   if (!isValid) {
-    console.log('Product data is invalid', event.body);
+    console.log('Product data is invalid:', event.body);
     return formatJSONResponse({
       response: 'Product data is invalid',
       statusCode: 400,

@@ -8,17 +8,18 @@ export const importFileParser = async (event: S3Event) => {
   console.log('importFileParser run', JSON.stringify(event.Records));
 
   const BucketName = process.env.BUCKET_NAME;
+  const SQS_URL = process.env.SQS_URL;
   const s3 = new AWS.S3({ region: 'eu-west-1' });
+  const sqs = new AWS.SQS();
 
-  let parsedData = [];
   let status = 200;
 
   try {
     for (const record of event.Records) {
       const key = record.s3.object.key;
-      console.log('RECORD------', record);
-      console.log('BucketName------', BucketName);
-      console.log('key------', key);
+      console.log('RECORD---------', record);
+      console.log('BucketName--------', BucketName);
+      console.log('key-------', key);
       const s3Stream = s3
         .getObject({
           Bucket: BucketName,
@@ -30,9 +31,15 @@ export const importFileParser = async (event: S3Event) => {
 
         s3Stream
           .pipe(csv())
-          .on('data', (data) => {
+          .on('data', async(data) => {
             console.log('DATA-----------:', data);
-            parsedData = [...parsedData, data];
+            let res = await sqs
+            .sendMessage({
+              QueueUrl: SQS_URL,
+              MessageBody: JSON.stringify(data),
+            })
+            .promise();
+        console.log('SENDED!!!', res);
           })
           .on('error', (error) => {
             status = 500;

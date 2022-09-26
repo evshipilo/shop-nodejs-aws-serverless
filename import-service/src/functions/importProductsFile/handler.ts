@@ -3,7 +3,7 @@ import { middyfy } from '@libs/lambda';
 import * as AWS from 'aws-sdk';
 
 export const importProductsFile = async (event) => {
-console.log('importProductsFile run');
+console.log('importProductsFile run-');
 
 const BucketName = process.env.BUCKET_NAME;
 const s3 = new AWS.S3({ region: 'eu-west-1' });
