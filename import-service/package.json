@@ -16,7 +16,8 @@
     "@middy/http-json-body-parser": "^2.5.3",
     "aws-sdk": "^2.1156.0",
     "csv-parser": "^3.0.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "dotenv": "^16.0.1"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.0.0",

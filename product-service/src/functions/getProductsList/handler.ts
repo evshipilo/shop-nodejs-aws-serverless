@@ -20,7 +20,7 @@ export const getProductsList: ValidatedEventAPIGatewayProxyEvent<
     
     return formatJSONResponse({ response: products.Items, statusCode: 200, headers });
   } catch (e) {
-    console.error('Error during database request executing', e);
+    console.error('Error during database request executing:', e);
 
     return formatJSONResponse({ response: 'Error during database request executing', statusCode: 500, headers });
   }

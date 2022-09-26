@@ -18,7 +18,7 @@ export const getProductsById: ValidatedEventAPIGatewayProxyEvent<
         id: productId,
       },
     };
-    console.log('productId', productId);
+    console.log('productId:', productId);
     const data = await db.get(params).promise();
     console.log('productItem', data.Item);
     if (!data.Item) {

@@ -14,7 +14,8 @@
   "dependencies": {
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "dotenv": "^16.0.1"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.0.0",
