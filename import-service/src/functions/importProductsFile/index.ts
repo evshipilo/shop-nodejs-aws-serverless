@@ -8,6 +8,13 @@ export default {
         method: 'get',
         path: 'import',
         cors: true,
+        authorizer: {
+          // name: 'basicAuthorizer',
+          arn: '${cf:authorization-service-evshipilo-dev.basicAuthorizerARN}',
+          resultTtlInSeconds: 0,
+          identitySource: 'method.request.header.Authorization',
+          type: 'token',
+        },
       },
     },
   ],

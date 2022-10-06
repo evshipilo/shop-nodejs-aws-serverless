@@ -5,38 +5,45 @@ import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
 
 const serverlessConfiguration: AWS = {
-  service: 'import-service',
+  service: 'import-service-evshipilo',
   frameworkVersion: '3',
   useDotenv: true,
   plugins: ['serverless-webpack'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
-    region: 'eu-west-1',
+    region: 'eu-central-1',
+    profile: 'temp',
     stage: 'dev',
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
-    iamRoleStatements: [
-      {
-        Effect: 'Allow',
-        Action: ['s3:ListBucket'],
-        Resource: [`arn:aws:s3:::${process.env.BUCKET_NAME}`],
-      },
-      {
-        Effect: 'Allow',
-        Action: ['s3:*'],
-        Resource: [`arn:aws:s3:::${process.env.BUCKET_NAME}/*`],
-      },
-      {
-        Effect: 'Allow',
-        Action: ['sqs:*'],
-        Resource: {
+    iam: {
+      role: {
+        permissionsBoundary:
+          'arn:aws:iam::${aws:accountId}:policy/eo_role_boundary',
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: ['s3:ListBucket'],
+            Resource: [`arn:aws:s3:::${process.env.BUCKET_NAME}`],
+          },
+          {
+            Effect: 'Allow',
+            Action: ['s3:*'],
+            Resource: [`arn:aws:s3:::${process.env.BUCKET_NAME}/*`],
+          },
+          {
+            Effect: 'Allow',
+            Action: ['sqs:*'],
+            Resource: {
           'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
         },
       },
     ],
+      },
+    },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
@@ -45,7 +52,27 @@ const serverlessConfiguration: AWS = {
     },
   },
   resources: {
+    extensions:{
+      IamRoleCustomResourcesLambdaExecution:{
+        Properties:{
+          PermissionsBoundary: 'arn:aws:iam::${aws:accountId}:policy/eo_role_boundary'
+        }
+      }
+    },
     Resources: {
+      GatewayResponseDefault4XX: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'DEFAULT_4XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
       productsUploadBucket: {
         Type: 'AWS::S3::Bucket',
         Properties: {

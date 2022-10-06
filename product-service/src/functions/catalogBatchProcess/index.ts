@@ -6,7 +6,7 @@ export default {
     {
       sqs: {
         batchSize: 5,
-        arn: '${cf:import-service-dev.ImportServiceSQSarn}',
+        arn: '${cf:import-service-evshipilo-dev.ImportServiceSQSarn}',
       },
     },
   ],
