@@ -9,7 +9,7 @@ export const importFileParser = async (event: S3Event) => {
 
   const BucketName = process.env.BUCKET_NAME;
   const SQS_URL = process.env.SQS_URL;
-  const s3 = new AWS.S3({ region: 'eu-west-1' });
+  const s3 = new AWS.S3({ region: 'eu-central-1' });
   const sqs = new AWS.SQS();
 
   let status = 200;

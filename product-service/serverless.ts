@@ -8,32 +8,37 @@ import catalogBatchProcess from '@functions/catalogBatchProcess';
 import deleteItemsFromDB from '@functions/deleteItemsFromDB';
 
 const serverlessConfiguration: AWS = {
-  service: 'product-service',
+  service: 'product-service-evshipilo',
   frameworkVersion: '3',
   useDotenv: true,
   plugins: ['serverless-webpack'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
-    region: 'eu-west-1',
+    region: 'eu-central-1',
+    profile: 'temp',
     stage: 'dev',
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
-    iamRoleStatements: [
-      {
-        Effect: 'Allow',
-        Action: [
-          'dynamodb:DescribeTable',
-          'dynamodb:Query',
-          'dynamodb:Scan',
-          'dynamodb:GetItem',
-          'dynamodb:PutItem',
-          'dynamodb:UpdateItem',
-          'dynamodb:DeleteItem',
-        ],
-        Resource: {
+    iam: {
+      role: {
+        permissionsBoundary:
+          'arn:aws:iam::${aws:accountId}:policy/eo_role_boundary',
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: [
+              'dynamodb:DescribeTable',
+              'dynamodb:Query',
+              'dynamodb:Scan',
+              'dynamodb:GetItem',
+              'dynamodb:PutItem',
+              'dynamodb:UpdateItem',
+              'dynamodb:DeleteItem',
+            ],
+            Resource: {
           'Fn::GetAtt': ['productsTable', 'Arn'],
         },
       },
@@ -45,6 +50,8 @@ const serverlessConfiguration: AWS = {
         },
       },
     ],
+      },
+    },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
@@ -70,7 +77,10 @@ const serverlessConfiguration: AWS = {
               AttributeType: 'S',
             },
           ],
-          BillingMode: 'PAY_PER_REQUEST',
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
         },
       },
       SNSTopic: {

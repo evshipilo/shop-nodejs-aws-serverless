@@ -11,7 +11,7 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
   const SNS_ARN = process.env.SNS_ARN
 
   const db = new DynamoDB.DocumentClient()
-  const sns = new SNS({ region: 'eu-west-1' });
+  const sns = new SNS({ region: 'eu-central-1' });
 
   try {
 
@@ -25,7 +25,7 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
 
       const item: Product = {id: uuid.v1(), count: +count, price: +price, title, description};
 
-      console.log('add product to db----', prod); 
+      console.log('add product to db-----', prod); 
 
 
       await db.put({
@@ -33,7 +33,7 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
         Item: item,
       }).promise();
 
-      console.log('added----', item);
+      console.log('added-----', item);
     }
 
     sns.publish(
@@ -48,7 +48,7 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
     );
 
     }catch(e){
-      console.log('error----', e);
+      console.log('error-----', e);
     }
 
 };
