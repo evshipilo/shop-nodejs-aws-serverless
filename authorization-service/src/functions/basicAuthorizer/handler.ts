@@ -1,72 +1,58 @@
-// import { APIGatewayTokenAuthorizerHandler, APIGatewayAuthorizerResult } from 'aws-lambda';
+import { APIGatewayTokenAuthorizerHandler, APIGatewayAuthorizerResult } from 'aws-lambda';
 import { middyfy } from '@libs/lambda';
 
+const basicAuthorizer: APIGatewayTokenAuthorizerHandler = async (event) => {
+console.log('basicAuthorizer event-----', event);
 
-export const basicAuthorizer = async (event, _context) => {
+  if (event.type !== 'TOKEN' || !event.hasOwnProperty('authorizationToken') || !event.authorizationToken) {
+    throw new Error('authorization error');
+  }
 
-console.log('basicAuthorizer event--------', event);
+  try {
+    const { authorizationToken } = event || {};
 
+    const encodedCreds = authorizationToken.split(' ')[1];
+    const buff = Buffer.from(encodedCreds, 'base64');
 
-  // if (event['type'] !== 'TOKEN') {
-  //   callback('Unauthorized');
-  // }
+    const [login, password] = buff.toString('utf-8').split(':');
+    console.log(`username: ${login} and password: ${password}`);
 
-  // try {
-  //   const { authorizationToken } = event || {};
+    const storedUserPassword = process.env.PASSWORD;
+    const storedUserLogin = process.env.LOGIN;
+    console.log('stored password ----- ', storedUserPassword, 'login', storedUserLogin);
 
-  //   const encodedCreds = authorizationToken.split(' ')[1];
-  //   const buff = Buffer.from(encodedCreds, 'base64');
-  //   const [username, password] = buff.toString('utf-8').split(':');
-  //   console.log(`username: ${username} and password: ${password}`);
+    const effect = storedUserPassword !== password || storedUserLogin !== login ? 'Deny' : 'Allow';
 
-  //   const storedUserPassword = process.env[username];
+    console.log('effect-----', effect);
 
-  //   const effect = !storedUserPassword || storedUserPassword !== password ? 'Deny' : 'Allow';
+    const policy = generatePolicy(encodedCreds, event.methodArn, effect);
 
-  //   const policy = generatePolicy(encodedCreds, event.methodArn, effect);
+    console.log('policy-----', policy);
 
-  //   callback(null, policy);
+    return policy;
+  } catch(e){
+    throw new Error('authorization error', e);
+  }
+};
 
-  //   return policy;
-  // } catch {
-  //   callback('Unauthorized');
-  // }
-
+function generatePolicy(
+  principalId: string,
+  resource: string,
+  effect: 'Allow' | 'Deny' = 'Allow'
+): APIGatewayAuthorizerResult {
   return {
-    principalId: 'token',
+    principalId,
     policyDocument: {
       Version: '2012-10-17',
       Statement: [
         {
           Action: 'execute-api:Invoke',
-          Effect: 'Allow',
-          Resource: '*',
+          Effect: effect,
+          Resource: resource,
         },
       ],
     },
   };
-
-
-};
-
-// function generatePolicy(
-//   principalId: string,
-//   resource: string,
-//   effect: 'Allow' | 'Deny' = 'Allow'
-// ): APIGatewayAuthorizerResult {
-//   return {
-//     principalId,
-//     policyDocument: {
-//       Version: '2012-10-17',
-//       Statement: [
-//         {
-//           Action: 'execute-api:Invoke',
-//           Effect: effect,
-//           Resource: resource,
-//         },
-//       ],
-//     },
-//   };
-// }
+}
 
 export const main = middyfy(basicAuthorizer);
